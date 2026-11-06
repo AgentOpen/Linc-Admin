@@ -1,0 +1,19 @@
+# 兼容垫片：运行目录无法指向 public/ 时，把整个项目目录作为站点根也可用。
+# 推荐仍优先将 public/ 设为运行目录（更安全，app/runtime/config 不会暴露）。
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # 敏感目录一律拒绝
+    RewriteRule ^(app|config|database|runtime|tests|docs|frontend)(/|$) - [F,L]
+
+    # 项目根真实存在的文件（如本垫片 index.php）直接提供
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    # 其余全部交给 public/index.php（由它提供静态资源、API 与 SPA 回退）
+    RewriteRule ^ public/index.php [QSA,L]
+</IfModule>
+
+<FilesMatch "^(composer\.(json|lock)|\.htaccess)$">
+    Require all denied
+</FilesMatch>
