@@ -17,6 +17,9 @@ return [
         'secret' => '请替换为至少 32 字节的随机密钥，安装向导会自动生成 64 位十六进制密钥',
         'expires_seconds' => 7200,   // 登录有效期（秒），与 Java 版一致
     ],
+    'portal' => [
+        'enabled' => false, // true：/ 为门户前台（前后台一体），/admin 为管理后台
+    ],
     'cache' => [
         'driver' => 'file',          // file（默认，零依赖）或 redis
         'redis' => [

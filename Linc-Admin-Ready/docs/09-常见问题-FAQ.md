@@ -67,10 +67,10 @@ UPDATE sys_user SET password = '$2y$10$L7q28dpKkcfrrUzfvZebqe7pvxcKpaSgh7EUenf9Q
 不是。`OperLog` 中间件自动将含 `password / token / secret / authorization` 的字段打码为 `******`，自定义日志请遵循同一规则。
 
 **Q18：新主题不出现 / 颜色不生效？**
-见 Linc-Admin-Dev 版《05 扩展开发实战》§5.2.5：检查 `SKINS` 注册、CSS 引入、选择器格式（`data-skin`）；页面写死字面量颜色会绕过主题。
+见《05》§5.2.5：检查 `SKINS` 注册、CSS 引入、选择器格式（`data-skin`）；页面写死字面量颜色会绕过主题。
 
 **Q19：代码生成器能直接生成可用模块吗？**
-不能，产物是**开发骨架**（仓储 / 服务 / 控制器 / 路由片段 / 页面占位 / 菜单 SQL），业务 CRUD 按 Linc-Admin-Dev 版《05 扩展开发实战》§5.1 实现后接入——这是有意的安全边界。
+不能，产物是**开发骨架**（实体 / 骨架接口 / 页面占位 / 菜单 SQL），业务 CRUD 按《05》§5.1 实现后接入——这是有意的安全边界。
 
 **Q20：升级版本时数据库怎么办？**
 版本脚本幂等：把新版 `database/V*.sql` 覆盖到部署目录后，对已装库手工执行**新增的**版本脚本即可；`install.lock` 不动。变更前先备份。

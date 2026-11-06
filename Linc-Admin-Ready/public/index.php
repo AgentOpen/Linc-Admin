@@ -58,10 +58,46 @@ if ($method !== 'GET' && $method !== 'HEAD') {
 
 $publicDir = __DIR__;
 
-// 已安装：静态资源 → SPA（Vue history 路由）
-// 未安装：一律进入安装向导页面
+// 门户版开关：安装向导生成 config.php 时写入；true 时 `/` 为门户前台、`/admin` 为管理后台
+$portalEnabled = ($config['portal']['enabled'] ?? false) === true;
+
+// 未安装：一律进入安装向导页面（门户开关此时不生效）
 if (!Config::installed()) {
     serveFile($publicDir . '/install.html');
+    exit;
+}
+
+/* ── 门户版：/admin 管理后台静态资源与回退 ────────────────── */
+
+if ($portalEnabled && ($uri === '/admin' || str_starts_with($uri, '/admin/'))) {
+    $rel = trim(substr($uri, 6), '/');
+    if ($rel === '') {
+        $rel = 'index.html';
+    }
+    $adminBase = $publicDir . DIRECTORY_SEPARATOR . 'admin';
+    $candidate = realpath($adminBase . '/' . $rel);
+    if ($candidate !== false && is_file($candidate) && str_starts_with($candidate, $adminBase . DIRECTORY_SEPARATOR)) {
+        serveFile($candidate);
+        exit;
+    }
+    // SPA history 路由回退：/admin/dashboard 等 → admin/index.html
+    serveFile($adminBase . DIRECTORY_SEPARATOR . 'index.html');
+    exit;
+}
+
+/* ── 门户版：`/` 与其余页面路径 → 门户前台（服务端渲染） ───── */
+
+if ($portalEnabled && $uri !== '/') {
+    // 静态文件（如 favicon、robots）优先
+    $candidate = realpath($publicDir . $uri);
+    if ($candidate !== false && is_file($candidate) && str_starts_with($candidate, $publicDir . DIRECTORY_SEPARATOR)) {
+        serveFile($candidate);
+        exit;
+    }
+}
+
+if ($portalEnabled) {
+    \Linc\Controller\PortalController::render();
     exit;
 }
 

@@ -8,12 +8,14 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
+use Linc\Controller\AnnounceController;
 use Linc\Controller\AuthController;
 use Linc\Controller\DashboardController;
 use Linc\Controller\GeneratorController;
 use Linc\Controller\HealthController;
 use Linc\Controller\InstallerController;
 use Linc\Controller\MonitorController;
+use Linc\Controller\SkinController;
 use Linc\Controller\SystemManagementController;
 use Linc\Middleware\AuthMiddleware;
 use Linc\Middleware\OperLog;
@@ -74,6 +76,25 @@ final class AppFactory
         });
 
         $app->get('/api/dashboard/summary', [DashboardController::class, 'summary']);
+
+        // 门户联动：公告管理（前台内容源）与主题皮肤持久化
+        $app->group('/api/biz/announce', function (RouteCollectorProxy $group): void {
+            $group->get('', [AnnounceController::class, 'index']);
+            $group->post('', [AnnounceController::class, 'create'])
+                ->add(new OperLog('公告管理', '新增'))
+                ->add(new RequirePermission('biz:announce:add'));
+            $group->put('/{id}', [AnnounceController::class, 'update'])
+                ->add(new OperLog('公告管理', '修改'))
+                ->add(new RequirePermission('biz:announce:edit'));
+            $group->delete('/{id}', [AnnounceController::class, 'remove'])
+                ->add(new OperLog('公告管理', '删除'))
+                ->add(new RequirePermission('biz:announce:remove'));
+        })->add(new RequirePermission('biz:announce:list'));
+
+        $app->get('/api/theme/skin', [SkinController::class, 'get']);
+        $app->put('/api/theme/skin', [SkinController::class, 'apply'])
+            ->add(new OperLog('主题中心', '应用门户主题'))
+            ->add(new RequirePermission('system:theme:edit'));
 
         $app->group('/api/system', function (RouteCollectorProxy $group): void {
             self::users($group);
