@@ -1,0 +1,139 @@
+/* ============================================================
+   灵枢青（Linc Indigo）主题 —— 复刻 DevUI 设计语言
+   「兼具设计美学与高效开发」：冷灰画布、纯白面板、靛蓝主色、
+   小圆角、轻阴影、扁平材质。仅覆盖与珍珠玻璃基线有差异的令牌，
+   未覆盖的变量回退 tokens.css 基线，保证新增令牌天然兼容。
+   ============================================================ */
+
+/* ── 浅色 ─────────────────────────────────────────────────── */
+:root[data-skin="linc"] {
+  /* 字色：DevUI 墨蓝灰五档 */
+  --ink: #252b3a;
+  --ink-muted: #575d6c;
+  --ink-soft: #71757e;
+  --ink-faint: #9498a3;
+  --leaf-text: #26a841;
+
+  /* 语义色：靛蓝 = 选择 / 主操作；绿 = 正常；红 = 警示 */
+  --blue: #5e7ce0;
+  --blue-hover: #7693f5;
+  --blue-soft: rgba(94, 124, 224, .1);
+  --lime: #3dcc7e;
+  --lime-soft: rgba(61, 220, 126, .14);
+  --red: #f66f6a;
+  --red-text: #d64f4a;
+  --red-soft: rgba(246, 111, 106, .12);
+  --focus: rgba(94, 124, 224, .8);
+
+  /* 圆角：DevUI 的小直角档位 */
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 8px;
+  --r-lg: 10px;
+  --r-xl: 12px;
+
+  /* 描边：冷静的灰线 */
+  --shade: 31, 35, 41;
+  --line: rgba(31, 35, 41, .09);
+  --line-strong: rgba(31, 35, 41, .13);
+  --glass-line: rgba(255, 255, 255, .96);
+  --glass-line-soft: rgba(255, 255, 255, .82);
+
+  /* 材质：扁平轻阴影，玻璃配方退化为实色面板 */
+  --e1: 0 1px 3px rgba(31, 35, 41, .08);
+  --e2: 0 2px 8px rgba(31, 35, 41, .1);
+  --e3: 0 4px 16px rgba(31, 35, 41, .12);
+  --e-accent: 0 2px 8px rgba(52, 72, 153, .32);
+  --e-accent-hover: 0 3px 10px rgba(52, 72, 153, .4);
+  --e-danger: 0 2px 8px rgba(198, 79, 74, .3);
+  --edge: inset 0 0 0 rgba(0, 0, 0, 0);
+  --edge-strong: inset 0 0 0 rgba(0, 0, 0, 0);
+
+  /* 场景面：冷灰画布 + 纯白面板 */
+  --stage: #e4e7ee;
+  --canvas: #f5f6f8;
+  --rail-bg: rgba(255, 255, 255, .98);
+  --pill-bg: linear-gradient(145deg, #ffffff, #f4f7fe);
+  --pill-inset: inset 0 0 0 rgba(0, 0, 0, 0);
+  --float-bg: rgba(255, 255, 255, .99);
+  --float-inset: inset 0 0 0 1px rgba(31, 35, 41, .06);
+  --surface: linear-gradient(145deg, #ffffff, #fdfdfe);
+  --surface-solid: #ffffff;
+  --groove-bg: rgba(31, 35, 41, .05);
+  --groove-inset: inset 0 0 0 rgba(0, 0, 0, 0);
+  --input-bg: #ffffff;
+  --hover-bg: rgba(31, 35, 41, .045);
+  --press-bg: rgba(31, 35, 41, .08);
+  --overlay: rgba(37, 43, 58, .3);
+
+  /* 环境光：靛蓝一团，收敛克制 */
+  --ambient-a: rgba(94, 124, 224, .07);
+  --ambient-b: rgba(61, 220, 126, .04);
+
+  /* 图谱语汇随主色走 */
+  --thread: rgba(31, 35, 41, .18);
+  --thread-active: rgba(94, 124, 224, .66);
+  --pulse-halo: rgba(94, 124, 224, .17);
+  --node-bg: rgba(255, 255, 255, .98);
+  --graph-accent: 94, 124, 224;
+  --graph-lime: 48, 168, 65;
+  --graph-danger: 214, 79, 74;
+  --graph-ink: 37, 43, 58;
+}
+
+/* ── 深色：DevUI 暗色面板系 ───────────────────────────────── */
+:root[data-skin="linc"][data-theme="dark"] {
+  --ink: #e6eaf2;
+  --ink-muted: #a6b0c2;
+  --ink-soft: #7f8a9d;
+  --ink-faint: #5c6575;
+  --leaf-text: #4ed88a;
+
+  --blue: #7693f5;
+  --blue-hover: #8ba6f7;
+  --blue-soft: rgba(118, 147, 245, .18);
+  --lime-soft: rgba(61, 220, 126, .16);
+  --red-text: #ff8a85;
+  --red-soft: rgba(246, 111, 106, .16);
+  --focus: rgba(118, 147, 245, .85);
+
+  --shade: 0, 0, 0;
+  --line: rgba(255, 255, 255, .08);
+  --line-strong: rgba(255, 255, 255, .12);
+  --glass-line: rgba(255, 255, 255, .1);
+  --glass-line-soft: rgba(255, 255, 255, .07);
+
+  --e1: 0 1px 3px rgba(0, 0, 0, .34);
+  --e2: 0 2px 10px rgba(0, 0, 0, .38);
+  --e3: 0 6px 20px rgba(0, 0, 0, .46);
+  --e-accent: 0 2px 10px rgba(0, 0, 0, .42), 0 4px 14px rgba(118, 147, 245, .22);
+  --e-accent-hover: 0 3px 12px rgba(0, 0, 0, .44), 0 6px 18px rgba(118, 147, 245, .3);
+  --e-danger: 0 2px 10px rgba(0, 0, 0, .42), 0 4px 14px rgba(246, 111, 106, .2);
+
+  --stage: #0d0f13;
+  --canvas: #16181d;
+  --rail-bg: rgba(23, 26, 31, .98);
+  --pill-bg: linear-gradient(145deg, rgba(255, 255, 255, .1), rgba(255, 255, 255, .05));
+  --float-bg: rgba(32, 36, 42, .98);
+  --float-inset: inset 0 0 0 1px rgba(255, 255, 255, .05);
+  --surface: linear-gradient(145deg, #23262d, #1f2228);
+  --surface-solid: #212429;
+  --groove-bg: rgba(0, 0, 0, .24);
+  --input-bg: rgba(255, 255, 255, .05);
+  --hover-bg: rgba(255, 255, 255, .05);
+  --press-bg: rgba(255, 255, 255, .08);
+  --overlay: rgba(0, 0, 0, .52);
+
+  --ambient-a: rgba(118, 147, 245, .07);
+  --ambient-b: rgba(61, 220, 126, .04);
+
+  --thread: rgba(255, 255, 255, .15);
+  --thread-active: rgba(118, 147, 245, .7);
+  --pulse-halo: rgba(118, 147, 245, .26);
+  --node-bg: rgba(35, 38, 45, .96);
+  --graph-accent: 118, 147, 245;
+  --graph-lime: 78, 216, 138;
+  --graph-danger: 255, 138, 133;
+  --graph-ink: 214, 222, 236;
+  --graph-paper: 33, 36, 41;
+}

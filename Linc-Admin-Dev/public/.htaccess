@@ -1,0 +1,17 @@
+# Apache 运行目录配置（public/ 为站点根目录时生效）
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # 真实存在的文件/目录直接由 Apache 提供（静态资源高效路径）
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # 其余全部交给前置控制器（/api 路由 + Vue history 路由回退）
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+# 禁止访问隐藏文件
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>

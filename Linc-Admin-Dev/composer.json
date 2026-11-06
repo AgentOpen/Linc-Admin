@@ -1,0 +1,27 @@
+{
+    "name": "linc/linc-admin",
+    "description": "灵枢中控 Linc-Admin 统一管理后台（PHP 版，Slim 4 + Vue 3，多主题）",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.0",
+        "ext-pdo_mysql": "*",
+        "ext-json": "*",
+        "slim/slim": "^4.14",
+        "slim/psr7": "^1.7",
+        "php-di/php-di": "^7.0",
+        "predis/predis": "^2.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Linc\\": "app/"
+        },
+        "files": [
+            "app/Core/helpers.php"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    }
+}

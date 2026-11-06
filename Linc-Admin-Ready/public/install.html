@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>安装向导 · 灵枢中控 Linc-Admin</title>
+<style>
+  :root {
+    --ink: #101418;
+    --ink-muted: #596368;
+    --ink-soft: #7e888c;
+    --ink-faint: #99a2a5;
+    --blue: #236de9;
+    --blue-hover: #1d61d5;
+    --blue-soft: rgba(35, 109, 233, .1);
+    --leaf-text: #58a021;
+    --red-text: #e0443b;
+    --red-soft: rgba(255, 90, 80, .11);
+    --stage: #dfe3e2;
+    --surface: rgba(252, 253, 252, .9);
+    --line: rgba(46, 58, 62, .085);
+    --line-strong: rgba(46, 58, 62, .11);
+    --e2: 0 1px 3px rgba(46, 58, 62, .06), 0 12px 30px rgba(46, 58, 62, .055);
+    --e3: 0 2px 6px rgba(46, 58, 62, .07), 0 22px 50px rgba(46, 58, 62, .08);
+    --edge: inset 0 1px 0 rgba(255, 255, 255, .92);
+    --r-sm: 12px;
+    --r-md: 16px;
+    --r-lg: 20px;
+    --control-h: 36px;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", Consolas, "JetBrains Mono", Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100vh; }
+  body {
+    font-family: "SF Pro Display", "SF Pro Text", "PingFang SC", -apple-system, BlinkMacSystemFont, "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(1100px 520px at 82% -10%, rgba(130, 221, 45, .14), transparent 60%),
+      radial-gradient(900px 480px at 8% 108%, rgba(35, 109, 233, .12), transparent 60%),
+      var(--stage);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 16px;
+  }
+  .wizard {
+    width: 640px;
+    max-width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-lg);
+    box-shadow: var(--e3), var(--edge);
+    backdrop-filter: blur(18px);
+    overflow: hidden;
+  }
+  header {
+    padding: 26px 32px 20px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  header h1 { font-size: 20px; font-weight: 650; margin: 0; letter-spacing: .01em; }
+  header .ver { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); }
+  .steps {
+    display: flex;
+    gap: 6px;
+    padding: 16px 32px 0;
+  }
+  .steps .dot {
+    height: 4px;
+    flex: 1;
+    border-radius: 999px;
+    background: rgba(46, 58, 62, .1);
+    transition: background .25s ease;
+  }
+  .steps .dot.done { background: var(--blue); }
+  .steps .dot.active { background: var(--blue); box-shadow: 0 0 0 3px var(--blue-soft); }
+  main { padding: 22px 32px 30px; }
+  .step-title { font-size: 15px; font-weight: 640; margin: 6px 0 4px; }
+  .step-hint { font-size: 13px; color: var(--ink-muted); margin: 0 0 18px; line-height: 1.6; }
+  .pane { display: none; }
+  .pane.active { display: block; }
+  .field { margin-bottom: 14px; }
+  .field label {
+    display: block;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    margin: 0 0 6px 2px;
+  }
+  .field input[type="text"], .field input[type="password"], .field input[type="number"] {
+    width: 100%;
+    height: var(--control-h);
+    border: 1px solid var(--line-strong);
+    border-radius: 10px;
+    padding: 0 12px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--ink);
+    background: rgba(255, 255, 255, .82);
+    outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+  .field input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-soft); }
+  .row { display: flex; gap: 12px; }
+  .row .field { flex: 1; }
+  .check {
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: 13px; color: var(--ink-muted);
+    margin: 4px 0 14px; cursor: pointer; user-select: none;
+  }
+  .check input { margin-top: 2px; accent-color: var(--blue); }
+  .env-list { border: 1px solid var(--line); border-radius: var(--r-sm); overflow: hidden; margin-bottom: 6px; }
+  .env-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 11px 16px;
+    font-size: 13.5px;
+    background: rgba(255, 255, 255, .6);
+  }
+  .env-item + .env-item { border-top: 1px solid var(--line); }
+  .env-item .detail { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); }
+  .badge {
+    font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 999px;
+  }
+  .badge.pass { color: var(--leaf-text); background: rgba(130, 221, 45, .14); }
+  .badge.fail { color: var(--red-text); background: var(--red-soft); }
+  .badge.info { color: var(--ink-muted); background: rgba(46, 58, 62, .07); }
+  .notice {
+    border-radius: 10px; padding: 10px 14px; font-size: 13px; line-height: 1.65;
+    margin: 12px 0 4px; display: none;
+  }
+  .notice.show { display: block; }
+  .notice.warn { background: var(--red-soft); color: var(--red-text); }
+  .notice.ok { background: rgba(130, 221, 45, .14); color: var(--leaf-text); }
+  .notice.info { background: var(--blue-soft); color: var(--blue); }
+  .notice code { font-family: var(--mono); font-size: 12px; }
+  .radio-line { display: flex; gap: 18px; margin: 4px 0 14px; font-size: 13.5px; color: var(--ink-muted); }
+  .radio-line label { display: flex; gap: 6px; align-items: center; cursor: pointer; }
+  .radio-line input { accent-color: var(--blue); }
+  footer {
+    padding: 18px 32px 26px;
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    border-top: 1px solid var(--line);
+    background: rgba(250, 251, 250, .66);
+  }
+  .steps-label { font-size: 12.5px; color: var(--ink-faint); }
+  .btn {
+    height: var(--control-h);
+    padding: 0 22px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    font-size: 14px; font-weight: 590; font-family: inherit;
+    cursor: pointer;
+    transition: box-shadow .15s ease, background .15s ease, opacity .15s;
+  }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .btn.primary { background: var(--blue); color: #fff; box-shadow: 0 1px 2px rgba(20, 66, 148, .28), 0 8px 18px rgba(35, 109, 233, .24); }
+  .btn.primary:hover:not(:disabled) { background: var(--blue-hover); }
+  .btn.ghost { background: rgba(255, 255, 255, .72); border-color: var(--line-strong); color: var(--ink); }
+  .btn.ghost:hover:not(:disabled) { background: #fff; }
+  .btn-group { display: flex; gap: 10px; }
+  .spinner {
+    width: 15px; height: 15px; margin-right: 7px; vertical-align: -2px;
+    border: 2px solid rgba(255, 255, 255, .35); border-top-color: #fff; border-radius: 50%;
+    display: inline-block; animation: spin .8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .done-hero {
+    text-align: center; padding: 26px 0 6px;
+  }
+  .done-hero .ring {
+    width: 74px; height: 74px; margin: 0 auto 18px; border-radius: 50%;
+    border: 3px solid rgba(130, 221, 45, .45);
+    border-top-color: #82dd2d;
+    animation: spin .7s linear infinite;
+  }
+  .done-hero .ring.settled { border-color: rgba(130, 221, 45, .5); animation: none; position: relative; }
+  .done-hero .ring.settled::after {
+    content: ""; position: absolute; left: 19px; top: 20px; width: 26px; height: 14px;
+    border-left: 4px solid var(--leaf-text); border-bottom: 4px solid var(--leaf-text);
+    transform: rotate(-48deg) scale(.9); transform-origin: center;
+  }
+  .done-hero h2 { font-size: 18px; margin: 0 0 8px; }
+  .done-hero p { font-size: 13.5px; color: var(--ink-muted); margin: 0 0 4px; line-height: 1.7; }
+  .done-hero .acct { font-family: var(--mono); color: var(--ink); }
+  .brand-foot { text-align: center; font-size: 12px; color: var(--ink-faint); padding: 0 32px 22px; }
+</style>
+</head>
+<body>
+<div class="wizard">
+  <header>
+    <h1>安装向导</h1>
+    <span class="ver">灵枢中控 Linc-Admin · 统一管理后台 v1.1.0</span>
+  </header>
+  <div class="steps" id="steps">
+    <div class="dot active" data-step="0"></div>
+    <div class="dot" data-step="1"></div>
+    <div class="dot" data-step="2"></div>
+    <div class="dot" data-step="3"></div>
+  </div>
+  <main>
+    <!-- 第 1 步：环境检查 -->
+    <section class="pane active" id="pane-0">
+      <p class="step-title">第一步 · 环境检查</p>
+      <p class="step-hint">确认服务器满足运行条件。全部通过后进入下一步。</p>
+      <div class="env-list" id="env-list">
+        <div class="env-item"><span>正在检测运行环境…</span></div>
+      </div>
+      <div class="notice" id="env-notice"></div>
+    </section>
+
+    <!-- 第 2 步：数据库 -->
+    <section class="pane" id="pane-1">
+      <p class="step-title">第二步 · 数据库连接</p>
+      <p class="step-hint">填写 MySQL 连接信息；数据库不存在时可勾选自动创建。</p>
+      <div class="row">
+        <div class="field" style="flex:2">
+          <label for="db-host">数据库地址</label>
+          <input type="text" id="db-host" value="localhost" autocomplete="off">
+        </div>
+        <div class="field" style="flex:1">
+          <label for="db-port">端口</label>
+          <input type="number" id="db-port" value="3306">
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="db-name">数据库名（字母数字下划线）</label>
+          <input type="text" id="db-name" value="linc_admin" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="db-tz">会话时区</label>
+          <input type="text" id="db-tz" value="+08:00" autocomplete="off">
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="db-user">数据库账号</label>
+          <input type="text" id="db-user" value="root" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="db-pass">数据库密码</label>
+          <input type="password" id="db-pass" value="">
+        </div>
+      </div>
+      <label class="check">
+        <input type="checkbox" id="db-create" checked>
+        数据库不存在时自动创建（CREATE DATABASE，需要账号有建库权限）
+      </label>
+      <div class="notice" id="db-notice"></div>
+    </section>
+
+    <!-- 第 3 步：管理员账号 -->
+    <section class="pane" id="pane-2">
+      <p class="step-title">第三步 · 管理员账号</p>
+      <p class="step-hint">设置登录后台的超级管理员账号与密码；缓存默认使用文件存储，无需安装 Redis。</p>
+      <div class="field">
+        <label for="admin-user">管理员账号</label>
+        <input type="text" id="admin-user" value="admin" autocomplete="off">
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="admin-pass">管理员密码（6-64 位）</label>
+          <input type="password" id="admin-pass" value="admin123">
+        </div>
+        <div class="field">
+          <label for="admin-pass2">确认密码</label>
+          <input type="password" id="admin-pass2" value="admin123">
+        </div>
+      </div>
+      <div class="field">
+        <label>会话与验证码存储</label>
+        <div class="radio-line">
+          <label><input type="radio" name="cache" value="file" checked> 文件存储（默认，推荐）</label>
+          <label><input type="radio" name="cache" value="redis"> Redis</label>
+        </div>
+      </div>
+      <div class="notice" id="admin-notice"></div>
+    </section>
+
+    <!-- 第 4 步：执行安装 -->
+    <section class="pane" id="pane-3">
+      <div id="run-progress">
+        <p class="step-title">第四步 · 执行安装</p>
+        <p class="step-hint">创建数据表、写入初始数据与配置文件。过程通常在几秒内完成。</p>
+        <div class="notice info" id="run-notice">等待开始…</div>
+      </div>
+      <div id="run-done" style="display:none">
+        <div class="done-hero">
+          <div class="ring settled" id="done-ring"></div>
+          <h2>安装完成</h2>
+          <p>管理员账号：<span class="acct" id="done-user">admin</span></p>
+          <p>现在可以使用该账号登录后台了。</p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <span class="steps-label" id="step-label">第 1 步 / 共 4 步</span>
+    <span class="btn-group">
+      <button class="btn ghost" id="btn-prev" style="display:none">上一步</button>
+      <button class="btn primary" id="btn-next" disabled>开始检测</button>
+    </span>
+  </footer>
+  <div class="brand-foot">安装完成后请将 runtime/install.lock 妥善保管；重新安装需删除该文件。</div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var step = 0;
+  var envPass = false;
+  var dbPass = false;
+  var installing = false;
+
+  var $ = function (id) { return document.getElementById(id); };
+  var notices = { env: $('env-notice'), db: $('db-notice'), admin: $('admin-notice'), run: $('run-notice') };
+  var TITLES = ['第 1 步 / 共 4 步', '第 2 步 / 共 4 步', '第 3 步 / 共 4 步', '第 4 步 / 共 4 步'];
+
+  function showNotice(key, kind, html) {
+    var el = notices[key];
+    el.className = 'notice show ' + kind;
+    el.innerHTML = html;
+  }
+  function hideNotice(key) {
+    notices[key].className = 'notice';
+    notices[key].innerHTML = '';
+  }
+
+  function api(path, options) {
+    return fetch(path, options).then(function (res) {
+      return res.json().catch(function () {
+        throw new Error('HTTP ' + res.status);
+      });
+    });
+  }
+  function call(path, body) {
+    return api(path, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body || {})
+    }).then(function (payload) {
+      if (payload.code !== 200) throw new Error(payload.message || '请求失败');
+      return payload.data;
+    });
+  }
+
+  function renderSteps() {
+    var dots = document.querySelectorAll('#steps .dot');
+    dots.forEach(function (dot, index) {
+      dot.className = 'dot' + (index < step ? ' done' : index === step ? ' active' : '');
+    });
+    document.querySelectorAll('.pane').forEach(function (pane, index) {
+      pane.className = 'pane' + (index === step ? ' active' : '');
+    });
+    $('step-label').textContent = TITLES[step];
+    var prev = $('btn-prev'), next = $('btn-next');
+    prev.style.display = step > 0 && step < 3 ? '' : 'none';
+    next.style.display = step === 3 ? 'none' : '';
+    next.disabled = false;
+    next.textContent = step === 0 ? (envPass ? '下一步' : '开始检测')
+      : step === 1 ? (dbPass ? '下一步' : '测试连接')
+      : '开始安装';
+  }
+
+  /* ── 第 1 步：环境检查 ── */
+  function runEnvCheck() {
+    $('btn-next').disabled = true;
+    hideNotice('env');
+    api('/api/install/env').then(function (payload) {
+      if (payload.code !== 200) throw new Error(payload.message || '检测失败');
+      var data = payload.data;
+      var list = $('env-list');
+      list.innerHTML = '';
+      data.items.forEach(function (item) {
+        var row = document.createElement('div');
+        row.className = 'env-item';
+        var badge = item.pass
+          ? '<span class="badge ' + (item.key === 'redis' ? 'info' : 'pass') + '">' + (item.key === 'redis' ? '可选' : '通过') + '</span>'
+          : '<span class="badge fail">未通过</span>';
+        row.innerHTML = '<span>' + escapeHtml(item.label) + '</span><span class="detail">' + escapeHtml(item.detail) + ' ' + badge + '</span>';
+        list.appendChild(row);
+      });
+      envPass = data.pass === true;
+      if (!envPass) {
+        showNotice('env', 'warn', '存在未通过项，请处理后刷新本页重试。');
+      }
+      renderSteps();
+    }).catch(function (error) {
+      showNotice('env', 'warn', '环境检测失败：' + escapeHtml(error.message));
+      renderSteps();
+    });
+  }
+
+  /* ── 第 2 步：数据库 ── */
+  function dbPayload() {
+    return {
+      host: $('db-host').value.trim() || 'localhost',
+      port: parseInt($('db-port').value, 10) || 3306,
+      database: $('db-name').value.trim(),
+      username: $('db-user').value.trim(),
+      password: $('db-pass').value,
+      timezone: $('db-tz').value.trim() || '+08:00',
+      createDatabase: $('db-create').checked
+    };
+  }
+
+  function runDbTest() {
+    hideNotice('db');
+    var conf = dbPayload();
+    if (!conf.database) { showNotice('db', 'warn', '数据库名不能为空。'); return; }
+    $('btn-next').disabled = true;
+    $('btn-next').innerHTML = '<span class="spinner"></span>连接中…';
+    call('/api/install/test', conf).then(function (data) {
+      dbPass = true;
+      var lines = ['连接成功，MySQL ' + escapeHtml(data.version) + '。'];
+      if (!data.databaseExists) {
+        lines.push(data.canCreate
+          ? '数据库 <code>' + escapeHtml(conf.database) + '</code> 不存在，安装时将自动创建。'
+          : '数据库不存在且未勾选自动创建。');
+        if (!data.canCreate) dbPass = false;
+      } else if (data.alreadyHasTables) {
+        lines.push('该库已存在本系统数据表，安装会保留已有数据并跳过重复初始化。');
+      }
+      showNotice('db', dbPass ? 'ok' : 'warn', lines.join('<br>'));
+      renderSteps();
+    }).catch(function (error) {
+      dbPass = false;
+      showNotice('db', 'warn', escapeHtml(error.message));
+      renderSteps();
+    });
+  }
+
+  /* ── 第 4 步：执行安装 ── */
+  function runInstall() {
+    installing = true;
+    $('run-progress').style.display = '';
+    $('run-done').style.display = 'none';
+    $('done-ring').className = 'ring';
+    showNotice('run', 'info', '正在创建数据表并写入初始数据…');
+    var cacheDriver = document.querySelector('input[name="cache"]:checked').value;
+    var payload = dbPayload();
+    payload.adminUsername = $('admin-user').value.trim() || 'admin';
+    payload.adminPassword = $('admin-pass').value;
+    payload.cacheDriver = cacheDriver;
+
+    var passOk = $('admin-pass').value === $('admin-pass2').value;
+    if (!passOk) {
+      installing = false;
+      showNotice('run', 'warn', '两次输入的密码不一致，请返回上一步修改。');
+      return;
+    }
+    call('/api/install/run', payload).then(function (data) {
+      showNotice('run', 'ok', '数据表初始化完成，配置已写入。');
+      $('done-user').textContent = data.adminUsername;
+      $('run-progress').style.display = 'none';
+      $('run-done').style.display = '';
+      var go = document.createElement('button');
+      go.className = 'btn primary';
+      go.textContent = '进入登录页';
+      go.style.marginTop = '16px';
+      go.onclick = function () { window.location.href = '/'; };
+      $('run-done').querySelector('.done-hero').appendChild(go);
+    }).catch(function (error) {
+      installing = false;
+      $('done-ring').className = 'ring settled';
+      showNotice('run', 'warn', '安装失败：' + escapeHtml(error.message) + '<br>修正后可直接重新执行（已创建的表不会重复初始化）。');
+    });
+  }
+
+  /* ── 步骤控制 ── */
+  $('btn-next').addEventListener('click', function () {
+    if (step === 0) {
+      if (envPass) { step = 1; renderSteps(); }
+      else { runEnvCheck(); }
+    } else if (step === 1) {
+      if (dbPass) { step = 2; renderSteps(); }
+      else { runDbTest(); }
+    } else if (step === 2) {
+      step = 3;
+      renderSteps();
+      runInstall();
+    }
+  });
+  $('btn-prev').addEventListener('click', function () {
+    if (step > 0 && step < 3 && !installing) { step--; renderSteps(); }
+  });
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Enter' && step < 3 && !$('btn-next').disabled) {
+      $('btn-next').click();
+    }
+  });
+
+  function escapeHtml(text) {
+    return String(text == null ? '' : text)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  renderSteps();
+  runEnvCheck();
+})();
+</script>
+</body>
+</html>

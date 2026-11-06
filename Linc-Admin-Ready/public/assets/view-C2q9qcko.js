@@ -1,0 +1,1 @@
+import{w as r,r as n}from"./index-Bh7Bdkvl.js";function d(o,s,l,a){const c=`linc.view.${o}`;let t=s;try{const e=localStorage.getItem(c);e&&l.includes(e)?t=e:a&&window.matchMedia("(max-width: 820px)").matches&&(t=a)}catch{}const i=n(t);return r(()=>i.value,e=>{try{localStorage.setItem(c,e)}catch{}}),i}export{d as u};

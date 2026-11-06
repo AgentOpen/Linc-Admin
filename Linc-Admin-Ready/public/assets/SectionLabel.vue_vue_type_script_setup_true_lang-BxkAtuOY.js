@@ -1,0 +1,1 @@
+import{d as a,b as t,c as s,s as o,l as c,p as n,t as i,aS as l,q as r}from"./index-Bh7Bdkvl.js";const m={class:"section-mark"},_=a({__name:"SectionLabel",props:{title:{},as:{}},setup(e){return(d,k)=>(t(),s("div",m,[e.title?(t(),o(l(e.as??"h2"),{key:0,class:"section-mark-title"},{default:c(()=>[n(i(e.title),1)]),_:1})):r("",!0)]))}});export{_};
