@@ -48,6 +48,7 @@ const COMPONENT_MAP: Record<string, () => Promise<{ default: Component }>> = {
   'monitor/loginlog/index': () => import('@/views/monitor/LoginLog.vue'),
   'tool/gen/index': () => import('@/views/tool/Generator.vue'),
   'theme/index': () => import('@/views/theme/ThemeCenter.vue'),
+  'biz/announce/index': () => import('@/views/biz/Announce.vue'),
 }
 
 /** 路由名由路径推导：/system/user → system-user */

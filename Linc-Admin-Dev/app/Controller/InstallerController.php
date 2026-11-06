@@ -136,8 +136,8 @@ final class InstallerController
         // 3. 写入自定义管理员（覆盖种子中的 admin 记录）
         $hash = password_hash($adminPassword, PASSWORD_BCRYPT);
         Database::execute(
-            'UPDATE sys_user SET username = ?, password = ?, update_by = ? WHERE id = 1',
-            [$adminUsername, $hash, 'installer']
+            'UPDATE sys_user SET username = ?, password = ?, nickname = ?, update_by = ? WHERE id = 1',
+            [$adminUsername, $hash, '管理员', 'installer']
         );
 
         // 4. 生成配置（数据库 + 随机 JWT 密钥 + 缓存驱动）
@@ -283,6 +283,9 @@ final class InstallerController
                 'secret' => {$export($jwtSecret)},
                 'expires_seconds' => 7200,
             ],
+            'portal' => [
+                'enabled' => false, // true：/ 为门户前台（前后台一体），/admin 为管理后台
+            ],
             'cache' => [
                 'driver' => {$export($cacheDriver)},
                 'redis' => [
@@ -298,6 +301,6 @@ final class InstallerController
 
     public static function version(): string
     {
-        return '1.1.0';
+        return '1.2.0';
     }
 }

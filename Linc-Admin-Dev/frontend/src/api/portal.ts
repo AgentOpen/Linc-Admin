@@ -35,6 +35,22 @@ export interface GeneratorImportRequest {
   tableNames: string[]
 }
 
+export interface AnnounceRow {
+  id: number
+  title: string
+  content?: string
+  status: number
+  publishTime?: string
+  createTime?: string
+}
+
+export interface AnnounceSave {
+  title: string
+  content?: string
+  status: number
+  publishTime?: string
+}
+
 /** 服务健康：status 运行状态（UP 正常）、time 服务端时间 */
 export interface HealthStatus {
   status: string
@@ -46,6 +62,18 @@ export function createPortalApi(client: HttpClient) {
     health: () => client.get<HealthStatus>('/health'),
     dashboard: {
       summary: (query?: QueryParams) => client.get<DashboardSummary>('/dashboard/summary', query),
+    },
+    /** 公告管理：门户前台的内容源（发布后「公告动态」实时展示） */
+    announce: {
+      list: (query?: QueryParams) => client.get<PageResult<AnnounceRow>>('/biz/announce', query),
+      create: (body: AnnounceSave) => client.post<Record<string, unknown>>('/biz/announce', body),
+      update: (id: number, body: AnnounceSave) => client.put<void>(`/biz/announce/${id}`, body),
+      remove: (id: number) => client.delete<void>(`/biz/announce/${id}`),
+    },
+    /** 门户皮肤：持久化到服务端，前台实时跟随后台主题 */
+    skin: {
+      get: () => client.get<{ skin: string }>('/theme/skin'),
+      apply: (skin: string) => client.put<{ skin: string }>('/theme/skin', { skin }),
     },
     generator: {
       tables: {

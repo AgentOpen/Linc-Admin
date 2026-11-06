@@ -5,7 +5,7 @@ export const APP = Object.freeze({
   name: '灵枢中控',
   shortName: '灵枢中控',
   subtitle: '统一管理后台',
-  version: 'v1.1.0',
+  version: 'v1.2.0',
   copyright: `© ${new Date().getFullYear()} 灵枢中控 Linc-Admin`,
 })
 

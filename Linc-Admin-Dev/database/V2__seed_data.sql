@@ -36,7 +36,7 @@ VALUES
 
 INSERT IGNORE INTO sys_user (id, username, password, nickname, phone, email, dept_id, status, create_by, update_by)
 VALUES
-    (1, 'admin', '$2b$10$L7q28dpKkcfrrUzfvZebqe7pvxcKpaSgh7EUenf9Q5z2LiYKxDpIu', '周明远', '', 'zhoumy@example.com', 5, 1, 'system', 'system'),
+    (1, 'admin', '$2b$10$L7q28dpKkcfrrUzfvZebqe7pvxcKpaSgh7EUenf9Q5z2LiYKxDpIu', '管理员', '', 'zhoumy@example.com', 5, 1, 'system', 'system'),
     (2, 'chensy', '$2b$10$L7q28dpKkcfrrUzfvZebqe7pvxcKpaSgh7EUenf9Q5z2LiYKxDpIu', '陈思远', '', 'chensy@example.com', 5, 1, 'system', 'system'),
     (3, 'wumin', '$2b$10$L7q28dpKkcfrrUzfvZebqe7pvxcKpaSgh7EUenf9Q5z2LiYKxDpIu', '吴敏', '', 'wumin@example.com', 6, 1, 'system', 'system');
 
