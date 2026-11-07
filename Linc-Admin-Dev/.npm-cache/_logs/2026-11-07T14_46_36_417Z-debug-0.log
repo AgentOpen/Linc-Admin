@@ -1,0 +1,24 @@
+0 verbose cli H:\OpenClaw\Nodejs\node.exe H:\OpenClaw\Nodejs\node_modules\npm\bin\npm-cli.js
+1 info using npm@10.9.7
+2 info using node@v22.22.2
+3 silly config load:file:H:\OpenClaw\Nodejs\node_modules\npm\npmrc
+4 silly config load:file:D:\Desktop\admin\Linc-Admin-Dev\frontend\.npmrc
+5 silly config load:file:C:\Users\Administrator\.npmrc
+6 silly config load:file:D:\Desktop\admin\Linc-Admin-Dev\frontend\etc\npmrc
+7 verbose title npm run build
+8 verbose argv "--prefix" "frontend" "run" "build"
+9 verbose logfile logs-max:10 dir:D:\Desktop\admin\Linc-Admin-Dev\.npm-cache\_logs\2026-11-07T14_46_36_417Z-
+10 verbose logfile D:\Desktop\admin\Linc-Admin-Dev\.npm-cache\_logs\2026-11-07T14_46_36_417Z-debug-0.log
+11 silly logfile done cleaning log files
+12 http fetch GET 200 https://registry.npmjs.org/npm 4706ms
+13 verbose cwd D:\Desktop\admin\Linc-Admin-Dev
+14 verbose os Windows_NT 10.0.22631
+15 verbose node v22.22.2
+16 verbose npm  v10.9.7
+17 notice
+17 notice New major version of npm available! 10.9.7 -> 12.2.2
+17 notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+17 notice To update run: npm install -g npm@12.2.2
+17 notice  { force: true, [Symbol(proc-log.meta)]: true }
+18 verbose exit 0
+19 info ok
