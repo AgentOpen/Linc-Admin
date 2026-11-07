@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Linc\Controller;
 
 use Linc\Repository\AnnounceRepository;
+use Linc\Service\SkinService;
 
 /**
  * 门户前台：服务端渲染（前后台不分离），外观跟随后台主题中心选择的皮肤。
@@ -40,7 +41,7 @@ final class PortalController
         } elseif (!\Linc\Core\Config::installed()) {
             $hint = '<p>系统尚未完成安装。请访问 <code>/install.html</code> 运行安装向导。</p>';
         } else {
-            $hint = '<p>数据库暂不可用：请确认 MySQL 已启动，并检查 <code>config/config.php</code> 中的连接信息。</p>';
+            $hint = '<p>数据库暂不可用（' . htmlspecialchars(mb_substr($error->getMessage(), 0, 120), ENT_QUOTES, 'UTF-8') . '）：请确认 MySQL 已启动，并检查 <code>config/config.php</code> 中的连接信息。</p>';
         }
         return <<<HTML
         <!DOCTYPE html>

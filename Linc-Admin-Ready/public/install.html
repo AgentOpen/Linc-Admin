@@ -112,13 +112,14 @@
 
   .field { margin-bottom: 15px; }
   .field label { display: block; font-size: 12.5px; color: var(--ink-soft); margin: 0 0 7px 2px; }
-  .field input {
+  .field input:not([type="checkbox"]):not([type="radio"]) {
     width: 100%; height: var(--control-h);
     border: 1px solid var(--line-strong); border-radius: 10px;
     padding: 0 13px; font-size: 14px; font-family: inherit; color: var(--ink);
     background: rgba(255, 255, 255, .05); outline: none;
     transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
   }
+  .field input[type="radio"], .field input[type="checkbox"] { width: auto; height: auto; margin: 0; }
   .field input::placeholder { color: var(--ink-faint); }
   .field input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-soft); background: rgba(255,255,255,.08); }
   .row { display: flex; gap: 14px; }
@@ -363,6 +364,13 @@
             </div>
           </div>
         
+          <div class="hero-cta-row" id="done-actions" style="display:none">
+            <button class="btn primary" id="btn-finish">完成并进入系统</button>
+            <span class="finish-note">完成后本向导永久关闭</span>
+          </div>
+        </section>
+
+        <section class="pane" id="pane-5">
           <div id="run-complete" style="display:none">
             <p class="step-title">第六步 · 安装完成</p>
             <p class="step-hint">请保存以下信息（建议截图或记录到密码管理器），点击完成后将不再显示安装向导。</p>
@@ -372,7 +380,7 @@
               <div class="done-item"><span class="done-k">管理员账号</span><b class="mono" id="done-user2">admin</b><span class="done-note">请妥善保存</span></div>
               <div class="done-item"><span class="done-k">管理员密码</span><b class="mono" id="done-pass2">••••••••</b><span class="done-note">仅本次显示，请立即保存</span></div>
             </div>
-            <div class="notice ok" id="done-tip">安装锁已写入，刷新或重新访问都不会再出现本向导。</div>
+            <div class="notice ok" id="done-tip2">安装锁已写入，刷新或重新访问都不会再出现本向导。</div>
           </div>
         </section>
       </main>
@@ -498,6 +506,12 @@
     $('btn-next').disabled = true;
     hideNotice('env');
     api('/api/install/env').then(function (payload) {
+      var list0 = $('env-list');
+      list0.innerHTML = '';
+      var waiting = document.createElement('div');
+      waiting.className = 'env-item';
+      waiting.innerHTML = '<span>正在读取检测结果…</span>';
+      list0.appendChild(waiting);
       if (payload.code === 403) {
         // 系统已安装：向导不再可用，给出干净的出口
         var list = $('env-list');
@@ -521,6 +535,15 @@
       var data = payload.data;
       var list = $('env-list');
       list.innerHTML = '';
+      if (!data || !Array.isArray(data.items) || !data.items.length) {
+        var errRow = document.createElement('div');
+        errRow.className = 'env-item';
+        errRow.innerHTML = '<span>检测结果为空或格式异常</span><span class="detail"><span class="badge fail">失败</span></span>';
+        list.appendChild(errRow);
+        envPass = false;
+        renderSteps();
+        return;
+      }
       data.items.forEach(function (item, i) {
         var row = document.createElement('div');
         row.className = 'env-item';
@@ -538,6 +561,12 @@
       renderSteps();
     }).catch(function (error) {
       var hint = apiHintHtml(error);
+      var list0 = $('env-list');
+      list0.innerHTML = '';
+      var errRow = document.createElement('div');
+      errRow.className = 'env-item';
+      errRow.innerHTML = '<span>环境检测未能完成（' + escapeHtml(error.message === 'NETWORK' ? '网络连接失败' : error.message) + '）</span><span class="detail"><span class="badge fail">失败</span></span>';
+      list0.appendChild(errRow);
       showNotice('env', 'warn', hint ? hint : ('环境检测失败：' + escapeHtml(error.message)));
       renderSteps();
     });
@@ -593,6 +622,7 @@
     showNotice('run', 'info', '正在创建数据表并写入初始数据…');
     var cacheDriver = document.querySelector('input[name="cache"]:checked').value;
     var payload = dbPayload();
+    window.__lincPortal = false;
     payload.adminUsername = $('admin-user').value.trim() || 'admin';
     payload.adminPassword = $('admin-pass').value;
     payload.cacheDriver = cacheDriver;
@@ -612,12 +642,8 @@
       $('done-admin').textContent = origin + (portal ? '/admin' : '/');
       $('done-user2').textContent = payload.adminUsername;
       $('done-pass2').textContent = payload.adminPassword;
-      var go = document.createElement('button');
-      go.className = 'btn primary';
-      go.textContent = portal ? '进入管理后台' : '进入登录页';
-      go.style.marginTop = '6px';
-      go.onclick = function () { window.location.href = portal ? '/admin' : '/'; };
-      $('done-tip').after(go);
+      $('btn-finish').textContent = portal ? '完成并进入管理后台' : '完成并进入登录页';
+      $('done-actions').style.display = 'flex';
       $('run-progress').style.display = 'none';
       $('run-complete').style.display = '';
       $('done-ring').className = 'ring settled';
@@ -653,6 +679,9 @@
       renderSteps();
       runInstall();
     }
+  });
+  $('btn-finish').addEventListener('click', function () {
+    window.location.href = window.__lincPortal ? '/admin' : '/';
   });
   $('btn-prev').addEventListener('click', function () {
     if (step > 0 && step < 4 && !installing) { step--; renderSteps(); }
