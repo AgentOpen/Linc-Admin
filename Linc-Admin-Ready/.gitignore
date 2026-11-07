@@ -13,8 +13,6 @@ runtime/install.lock
 public/assets/
 public/index.html
 
-.npm-cache/
-
 # 系统文件
 .DS_Store
 Thumbs.db

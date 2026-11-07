@@ -37,6 +37,9 @@ UPDATE sys_user SET password = '$2y$10$L7q28dpKkcfrrUzfvZebqe7pvxcKpaSgh7EUenf9Q
 
 ## 部署相关
 
+**Q9.8：门户/后台报「Access denied for user … (using password: YES)」（错误 1045）？**
+`config/config.php` 里的数据库账号密码与 MySQL 实际不符。修复：编辑 config/config.php 改成正确账号密码；或删除 runtime/install.lock 与 config/config.php 后访问 /install.html 重装。建议用面板创建的专属数据库账号而非 root。
+
 **Q9.5：安装向导提示「环境检测失败：HTTP 404」或「后端接口不可达」？**
 伪静态未配置（新手最常见问题）：页面能打开但 `/api/*` 全部 404。宝塔用户：站点设置 → 伪静态 → 下拉选 `laravel5` 模板保存；Nginx 用户：在 `location /` 中加 `try_files $uri $uri/ /index.php$is_args$args;`；Apache：启用 mod_rewrite 且 AllowOverride All。配置后刷新页面即可。
 
