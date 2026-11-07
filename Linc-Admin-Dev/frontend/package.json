@@ -9,6 +9,7 @@
     "test:api": "node --test --experimental-strip-types src/api/__tests__/*.test.ts",
     "test:unit": "node --test --experimental-strip-types src/api/__tests__/*.test.ts src/utils/__tests__/*.test.ts",
     "build": "vue-tsc --noEmit && vite build",
+    "build:admin": "vue-tsc --noEmit && vite build --mode admin",
     "preview": "vite preview"
   },
   "dependencies": {
