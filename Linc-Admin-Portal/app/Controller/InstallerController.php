@@ -164,16 +164,33 @@ final class InstallerController
             throw new BusinessException('安装锁写入失败：' . self::baseDir('runtime/install.lock'));
         }
 
+        $portalEnabled = (bool) Config::get('portal.enabled', false);
         return AuthController::ok($response, [
             'adminUsername' => $adminUsername,
-            'loginPath' => '/login',
+            'loginPath' => $portalEnabled ? '/admin' : '/login',
+            'portal' => $portalEnabled,
         ]);
     }
 
-    /** 安装状态查询（供前端判断是否跳安装页）。 */
+    /** 安装状态查询（供前端判断是否跳安装页；含数据库可达性，不含敏感信息）。 */
     public static function status(Request $request, Response $response): Response
     {
-        return AuthController::ok($response, ['installed' => Config::installed()]);
+        $installed = Config::installed();
+        $dbOk = null;
+        if ($installed && is_file(Config::configFile())) {
+            try {
+                Database::scalar('SELECT 1');
+                $dbOk = true;
+            } catch (\Throwable) {
+                $dbOk = false;
+            }
+        }
+        return AuthController::ok($response, [
+            'installed' => $installed,
+            'lockExists' => is_file(dirname(__DIR__, 2) . '/runtime/install.lock'),
+            'configExists' => is_file(Config::configFile()),
+            'dbOk' => $dbOk,
+        ]);
     }
 
     /* ── 私有工具 ─────────────────────────────────────────── */
@@ -301,6 +318,6 @@ final class InstallerController
 
     public static function version(): string
     {
-        return '1.2.0';
+        return '1.2.1';
     }
 }

@@ -180,6 +180,24 @@
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
+  .protocol-box {
+    border: 1px solid var(--line); border-radius: var(--r-md);
+    background: rgba(255,255,255,.03); padding: 18px 22px;
+    max-height: 300px; overflow-y: auto; line-height: 1.9; font-size: 13px; color: var(--ink-muted);
+  }
+  .protocol-box h3 { font-size: 14px; color: var(--ink); margin: 0 0 10px; }
+  .protocol-box ol { margin: 0; padding-left: 18px; }
+  .protocol-box li { margin-bottom: 8px; }
+  .protocol-box b { color: var(--ink); }
+  .done-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 6px 0 14px; }
+  .done-item {
+    border: 1px solid var(--line-strong); border-radius: var(--r-md);
+    background: rgba(255,255,255,.04); padding: 14px 18px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .done-item .done-k { font-size: 12px; color: var(--ink-soft); }
+  .done-item b.mono { font-size: 14.5px; font-weight: 680; color: var(--ink); word-break: break-all; }
+  .done-item .done-note { font-size: 11.5px; color: var(--ink-faint); }
   .done-hero { text-align: center; padding: 30px 0 8px; }
   .done-ring {
     width: 84px; height: 84px; margin: 0 auto 22px; border-radius: 50%;
@@ -216,10 +234,12 @@
         <div><div class="brand-name">灵枢中控</div><div class="brand-sub">Linc-Admin · 统一管理后台</div></div>
       </div>
       <div class="steps" id="steps">
-        <div class="step-item active" data-step="0"><span class="step-num">01</span><span class="step-label">环境检查</span></div>
-        <div class="step-item" data-step="1"><span class="step-num">02</span><span class="step-label">数据库连接</span></div>
-        <div class="step-item" data-step="2"><span class="step-num">03</span><span class="step-label">管理员账号</span></div>
-        <div class="step-item" data-step="3"><span class="step-num">04</span><span class="step-label">执行安装</span></div>
+        <div class="step-item active" data-step="0"><span class="step-num">01</span><span class="step-label">安装协议</span></div>
+        <div class="step-item" data-step="1"><span class="step-num">02</span><span class="step-label">环境检查</span></div>
+        <div class="step-item" data-step="2"><span class="step-num">03</span><span class="step-label">数据库连接</span></div>
+        <div class="step-item" data-step="3"><span class="step-num">04</span><span class="step-label">管理员账号</span></div>
+        <div class="step-item" data-step="4"><span class="step-num">05</span><span class="step-label">执行安装</span></div>
+        <div class="step-item" data-step="5"><span class="step-num">06</span><span class="step-label">完成</span></div>
       </div>
       <div class="rail-foot">
         安装完成会在 <code>runtime/install.lock</code> 落锁；重新安装需删除该文件与 <code>config/config.php</code>。
@@ -229,11 +249,31 @@
     <div class="content">
       <header>
         <h1>安装向导</h1>
-        <span class="ver">v1.2.0</span>
+        <span class="ver">v1.2.1</span>
       </header>
       <main>
         <section class="pane active" id="pane-0">
-          <p class="step-title">第一步 · 环境检查</p>
+          <p class="step-title">第一步 · 安装协议</p>
+          <p class="step-hint">安装前请仔细阅读以下条款，理解并同意后再继续。</p>
+          <div class="protocol-box">
+            <h3>灵枢中控 Linc-Admin 开源使用协议</h3>
+            <ol>
+              <li><b>开源许可</b>：本软件基于 <b>MIT License</b> 授权发布，允许免费使用、复制、修改与分发，须保留原始版权与许可声明。</li>
+              <li><b>免责声明</b>：本软件按「现状」提供，不附带任何明示或默示的担保。使用本软件所产生的任何直接或间接损失，作者与贡献者不承担责任。</li>
+              <li><b>数据安全</b>：安装过程中写入的数据库信息与管理员凭据由使用者自行保管；请务必在生产环境修改默认密码、配置强密码策略并做好数据备份。</li>
+              <li><b>合法使用</b>：不得将本软件用于任何违反所在国家或地区法律法规的用途；由此产生的后果由使用者自行承担。</li>
+              <li><b>安全责任</b>：部署后请及时完成安全加固（修改默认密码、服务仅本机监听、关闭多余端口等），服务器安全问题由使用者负责维护。</li>
+              <li><b>技术支持</b>：本软件为开源项目，问题与建议请通过项目仓库 Issue 提交。</li>
+            </ol>
+          </div>
+          <label class="check" style="margin-top:16px">
+            <input type="checkbox" id="agree">
+            我已阅读并理解以上协议内容，同意遵守开源许可与使用条款
+          </label>
+          <div class="notice" id="agree-notice"></div>
+        </section>
+        <section class="pane" id="pane-1">
+          <p class="step-title">第二步 · 环境检查</p>
           <p class="step-hint">自动检测服务器是否满足运行条件，全部通过后进入下一步。</p>
           <div class="env-list" id="env-list">
             <div class="env-item"><span>正在检测运行环境…</span></div>
@@ -241,8 +281,8 @@
           <div class="notice" id="env-notice"></div>
         </section>
 
-        <section class="pane" id="pane-1">
-          <p class="step-title">第二步 · 数据库连接</p>
+        <section class="pane" id="pane-2">
+          <p class="step-title">第三步 · 数据库连接</p>
           <p class="step-hint">填写 MySQL 连接信息；数据库不存在时可勾选自动创建。</p>
           <div class="row">
             <div class="field" style="flex:2">
@@ -281,8 +321,8 @@
           <div class="notice" id="db-notice"></div>
         </section>
 
-        <section class="pane" id="pane-2">
-          <p class="step-title">第三步 · 管理员账号</p>
+        <section class="pane" id="pane-3">
+          <p class="step-title">第四步 · 管理员账号</p>
           <p class="step-hint">设置登录后台的超级管理员；会话与验证码默认使用文件存储，无需安装 Redis。</p>
           <div class="field">
             <label for="admin-user">管理员账号</label>
@@ -308,9 +348,9 @@
           <div class="notice" id="admin-notice"></div>
         </section>
 
-        <section class="pane" id="pane-3">
+        <section class="pane" id="pane-4">
           <div id="run-progress">
-            <p class="step-title">第四步 · 执行安装</p>
+            <p class="step-title">第五步 · 执行安装</p>
             <p class="step-hint">创建数据表、写入初始数据与配置文件，通常几秒内完成。</p>
             <div class="notice info" id="run-notice">等待开始…</div>
           </div>
@@ -321,6 +361,18 @@
               <p>管理员账号：<span class="acct" id="done-user">admin</span></p>
               <p>现在可以使用该账号登录后台了。</p>
             </div>
+          </div>
+        
+          <div id="run-complete" style="display:none">
+            <p class="step-title">第六步 · 安装完成</p>
+            <p class="step-hint">请保存以下信息（建议截图或记录到密码管理器），点击完成后将不再显示安装向导。</p>
+            <div class="done-grid">
+              <div class="done-item"><span class="done-k">门户前台</span><b class="mono" id="done-front">—</b><span class="done-note">访客访问域名即可浏览</span></div>
+              <div class="done-item"><span class="done-k">管理后台</span><b class="mono" id="done-admin">—</b><span class="done-note">管理员登录入口</span></div>
+              <div class="done-item"><span class="done-k">管理员账号</span><b class="mono" id="done-user2">admin</b><span class="done-note">请妥善保存</span></div>
+              <div class="done-item"><span class="done-k">管理员密码</span><b class="mono" id="done-pass2">••••••••</b><span class="done-note">仅本次显示，请立即保存</span></div>
+            </div>
+            <div class="notice ok" id="done-tip">安装锁已写入，刷新或重新访问都不会再出现本向导。</div>
           </div>
         </section>
       </main>
@@ -346,8 +398,8 @@
   var installing = false;
 
   var $ = function (id) { return document.getElementById(id); };
-  var notices = { env: $('env-notice'), db: $('db-notice'), admin: $('admin-notice'), run: $('run-notice') };
-  var TITLES = ['第 1 步 / 共 4 步', '第 2 步 / 共 4 步', '第 3 步 / 共 4 步', '第 4 步 / 共 4 步'];
+  var notices = { agree: $('agree-notice'), env: $('env-notice'), db: $('db-notice'), admin: $('admin-notice'), run: $('run-notice') };
+  var TITLES = ['第 1 步 / 共 6 步', '第 2 步 / 共 6 步', '第 3 步 / 共 6 步', '第 4 步 / 共 6 步', '第 5 步 / 共 6 步', '第 6 步 / 共 6 步'];
 
   function showNotice(key, kind, html) {
     notices[key].className = 'notice show ' + kind;
@@ -406,12 +458,39 @@
     });
     $('step-label').textContent = TITLES[step];
     var prev = $('btn-prev'), next = $('btn-next');
-    prev.style.display = step > 0 && step < 3 ? '' : 'none';
-    next.style.display = step === 3 ? 'none' : '';
+    prev.style.display = step > 0 && step < 4 ? '' : 'none';
+    next.style.display = step === 4 || step === 5 ? 'none' : '';
     next.disabled = false;
-    next.textContent = step === 0 ? (envPass ? '下一步' : '开始检测')
-      : step === 1 ? (dbPass ? '下一步' : '测试连接')
+    next.textContent = step === 0 ? '同意并下一步'
+      : step === 1 ? (envPass ? '下一步' : '开始检测')
+      : step === 2 ? (dbPass ? '下一步' : '测试连接')
       : '开始安装';
+  }
+
+  function showInstalledScreen(d) {
+    document.querySelectorAll('#steps .step-item').forEach(function (item) { item.className = 'step-item done'; });
+    var main = document.querySelector('.content main');
+    main.innerHTML = '';
+    var box = document.createElement('div');
+    box.className = 'done-hero';
+    box.style.paddingTop = '40px';
+    box.innerHTML = ''
+      + '<div class="ring settled" style="margin-bottom: 18px;"></div>'
+      + '<h2>系统已完成安装</h2>'
+      + '<p>安装向导已关闭，刷新或重新访问都不会再出现。</p>'
+      + (d.adminUsername ? '<p>管理员账号：<span class="acct">' + escapeHtml(d.adminUsername) + '</span></p>' : '')
+      + (d.dbOk === false ? '<p style="color: var(--red-text)">检测到数据库连接异常，请检查 config/config.php 或 MySQL 状态。</p>' : '')
+      + '<p style="margin-top: 14px">如需重新安装，请先删除 <code>runtime/install.lock</code> 与 <code>config/config.php</code>，再刷新本页。</p>';
+    var go = document.createElement('button');
+    go.className = 'btn primary';
+    go.style.marginTop = '18px';
+    go.textContent = '打开系统';
+    go.onclick = function () { window.location.href = '/'; };
+    box.appendChild(go);
+    main.appendChild(box);
+    $('btn-next').style.display = 'none';
+    $('btn-prev').style.display = 'none';
+    $('step-label').textContent = '已完成安装';
   }
 
   /* ── 第 1 步：环境检查 ── */
@@ -419,6 +498,25 @@
     $('btn-next').disabled = true;
     hideNotice('env');
     api('/api/install/env').then(function (payload) {
+      if (payload.code === 403) {
+        // 系统已安装：向导不再可用，给出干净的出口
+        var list = $('env-list');
+        list.innerHTML = '';
+        var row = document.createElement('div');
+        row.className = 'env-item';
+        row.innerHTML = '<span>系统已完成安装，本向导已关闭。</span><span class="detail"><span class="badge info">已安装</span></span>';
+        list.appendChild(row);
+        envPass = false;
+        showNotice('env', 'ok', '检测到系统已安装。如需重新安装，请先删除 <code>runtime/install.lock</code> 与 <code>config/config.php</code> 后刷新本页；否则可直接访问系统首页。');
+        var go = document.createElement('button');
+        go.className = 'btn primary';
+        go.style.marginTop = '6px';
+        go.textContent = '打开系统首页';
+        go.onclick = function () { window.location.href = '/'; };
+        $('env-notice').after(go);
+        $('btn-next').disabled = true;
+        return;
+      }
       if (payload.code !== 200) throw new Error(payload.message || '检测失败');
       var data = payload.data;
       var list = $('env-list');
@@ -491,6 +589,7 @@
     $('run-progress').style.display = '';
     $('run-done').style.display = 'none';
     $('done-ring').className = 'ring';
+    $('run-complete').style.display = 'none';
     showNotice('run', 'info', '正在创建数据表并写入初始数据…');
     var cacheDriver = document.querySelector('input[name="cache"]:checked').value;
     var payload = dbPayload();
@@ -506,18 +605,27 @@
     }
     call('/api/install/run', payload).then(function (data) {
       showNotice('run', 'ok', '数据表初始化完成，配置已写入。');
-      $('done-user').textContent = data.adminUsername;
-      $('run-progress').style.display = 'none';
-      $('run-done').style.display = '';
+      var origin = window.location.origin;
+      var portal = data.portal === true;
+      $('done-front').textContent = origin + '/';
+      $('done-front').closest('.done-item').style.display = portal ? '' : 'none';
+      $('done-admin').textContent = origin + (portal ? '/admin' : '/');
+      $('done-user2').textContent = payload.adminUsername;
+      $('done-pass2').textContent = payload.adminPassword;
       var go = document.createElement('button');
       go.className = 'btn primary';
-      go.textContent = '进入登录页';
-      go.style.marginTop = '16px';
-      go.onclick = function () { window.location.href = '/'; };
-      $('run-done').querySelector('.done-hero').appendChild(go);
+      go.textContent = portal ? '进入管理后台' : '进入登录页';
+      go.style.marginTop = '6px';
+      go.onclick = function () { window.location.href = portal ? '/admin' : '/'; };
+      $('done-tip').after(go);
+      $('run-progress').style.display = 'none';
+      $('run-complete').style.display = '';
+      $('done-ring').className = 'ring settled';
+      step = 5;
+      renderSteps();
+      installing = false;
     }).catch(function (error) {
       installing = false;
-      $('done-ring').className = 'ring settled';
       var hint = apiHintHtml(error);
       showNotice('run', 'warn', (hint ? hint : '安装失败：' + escapeHtml(error.message)) + '<br>修正后可直接重新执行（已创建的表不会重复初始化）。');
     });
@@ -526,23 +634,32 @@
   /* ── 步骤控制 ── */
   $('btn-next').addEventListener('click', function () {
     if (step === 0) {
-      if (envPass) { step = 1; renderSteps(); }
-      else { runEnvCheck(); }
+      if (!$('agree').checked) {
+        showNotice('agree', 'warn', '请先勾选同意安装协议，再继续安装。');
+        return;
+      }
+      hideNotice('agree');
+      step = 1;
+      renderSteps();
+      runEnvCheck();
     } else if (step === 1) {
-      if (dbPass) { step = 2; renderSteps(); }
-      else { runDbTest(); }
+      if (envPass) { step = 2; renderSteps(); }
+      else { runEnvCheck(); }
     } else if (step === 2) {
-      step = 3;
+      if (dbPass) { step = 3; renderSteps(); }
+      else { runDbTest(); }
+    } else if (step === 3) {
+      step = 4;
       renderSteps();
       runInstall();
     }
   });
   $('btn-prev').addEventListener('click', function () {
-    if (step > 0 && step < 3 && !installing) { step--; renderSteps(); }
+    if (step > 0 && step < 4 && !installing) { step--; renderSteps(); }
   });
 
   document.addEventListener('keydown', function (event) {
-    if (event.key === 'Enter' && step < 3 && !$('btn-next').disabled) {
+    if (event.key === 'Enter' && step < 4 && !$('btn-next').disabled) {
       $('btn-next').click();
     }
   });
@@ -553,8 +670,19 @@
       .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 
-  renderSteps();
-  runEnvCheck();
+  /* 启动：先查安装状态——已安装则显示专用屏，不再展示向导（用户要求装完永不再显示） */
+  api('/api/install/status').then(function (payload) {
+    var d = payload.data || {};
+    if (d.installed) {
+      showInstalledScreen(d);
+      return;
+    }
+    renderSteps();
+    runEnvCheck();
+  }).catch(function () {
+    renderSteps();
+    runEnvCheck();
+  });
 
   /* ── 神经粒子背景：深空星点 + 邻近连线（减少动效时停用） ── */
   (function () {

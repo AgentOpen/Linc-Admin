@@ -142,6 +142,9 @@ function serveFile(string $file): void
         default => 'application/octet-stream',
     };
     header('Content-Type: ' . $mime);
+    if ($mime === 'text/html; charset=utf-8') {
+        header('Cache-Control: no-cache, no-store, must-revalidate');
+    }
     header('Content-Length: ' . (string) filesize($file));
     header('X-Content-Type-Options: nosniff');
     if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'HEAD') {
