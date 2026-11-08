@@ -1,23 +1,43 @@
 <script setup lang="ts">
-/* 主题中心：多主题舞台。点击即换、本机记住、门户前台实时跟随；主题包为 CSS 令牌覆盖。 */
+/* 主题中心：多主题舞台 + 门户站点设置。点击即换、本机记住、门户前台实时跟随。 */
 import { computed, onMounted, ref } from 'vue'
 import Icon from '@/components/Icon.vue'
-import { Button, Tag } from '@/components/ui'
+import { Button, Tag, TextInput } from '@/components/ui'
 import { PageHeader } from '@/components/ui'
 import { SKINS, skinOf } from '@/themes'
 import { useSkin } from '@/composables/appearance'
-import { pushToast } from '@/composables/toast'
+import { pushToast, toastError } from '@/composables/toast'
 import { APP } from '@/data'
 import { revealCascade, settlePop } from '@/composables/motion'
+import { portalApi } from '@/api'
 
 const { appearance, applySkin } = useSkin()
 const syncing = ref(false)
+const savingColor = ref(false)
 
 const activeSkin = computed(() => skinOf(appearance.skin))
 const rootEl = ref<HTMLElement | null>(null)
 
-onMounted(() => {
+/* 门户站点主色：预设色卡 + 自定义 */
+const PRESET_COLORS = [
+  { hex: '', label: '默认' },
+  { hex: '#5e7ce0', label: '靛蓝' },
+  { hex: '#236de9', label: '天蓝' },
+  { hex: '#0fa37f', label: '青绿' },
+  { hex: '#7a5cd6', label: '紫罗兰' },
+  { hex: '#e37e29', label: '橙' },
+  { hex: '#e0443b', label: '红' },
+]
+const portalColor = ref('')
+const portalColorDirty = ref(false)
+
+onMounted(async () => {
   revealCascade(rootEl.value)
+  // 读取服务端当前主色
+  try {
+    const data = await portalApi.skin.get()
+    if (data.primary) { portalColor.value = data.primary; portalColorDirty.value = false }
+  } catch { /* 静默 */ }
 })
 
 function apply(key: string, name: string) {
@@ -25,13 +45,36 @@ function apply(key: string, name: string) {
   applySkin(key as never)
   pushToast(`已切换到「${name}」主题`, 'ok')
   settlePop(document.querySelector('.theme-grid'))
-  // 持久化到服务端：门户前台实时跟随（无权限或接口异常时保持本机切换，静默降级）
   syncing.value = true
   import('@/api').then(({ portalApi }) =>
-    portalApi.skin.apply(key)
+    portalApi.skin.apply(key, portalColor.value || undefined)
       .catch(() => { /* 静默：本机主题仍生效 */ })
       .finally(() => { syncing.value = false })
   )
+}
+
+async function saveColor() {
+  if (!portalColorDirty.value) return
+  savingColor.value = true
+  try {
+    await portalApi.skin.apply(appearance.skin, portalColor.value || undefined)
+    pushToast(portalColor.value ? '门户站点主色已保存' : '门户站点主色已恢复默认', 'ok')
+    portalColorDirty.value = false
+  } catch (error) {
+    toastError(error, '主色保存失败')
+  } finally {
+    savingColor.value = false
+  }
+}
+
+function setPreset(hex: string) {
+  portalColor.value = hex
+  portalColorDirty.value = true
+}
+
+function onCustomColor(e: Event) {
+  portalColor.value = (e.target as HTMLInputElement).value
+  portalColorDirty.value = true
 }
 
 function isActive(key: string) {
@@ -45,7 +88,7 @@ function isActive(key: string) {
       <Tag tone="info">已安装 {{ SKINS.length }} 套主题</Tag>
     </PageHeader>
 
-    <!-- 当前主题舞台：渐变流动横幅 -->
+    <!-- 当前主题舞台 -->
     <section class="stage-hero m-surface" :data-hero="activeSkin?.key">
       <div class="stage-glow" aria-hidden="true"></div>
       <div class="stage-info">
@@ -126,6 +169,39 @@ function isActive(key: string) {
           </div>
         </div>
       </article>
+    </section>
+
+    <!-- 门户站点设置 -->
+    <section class="portal-set m-surface reveal">
+      <div class="portal-set-head">
+        <b>门户站点设置</b>
+        <span class="faint">门户前台外观与 SEO 文案；切换立即生效</span>
+      </div>
+      <div class="portal-set-body">
+        <div class="portal-set-row">
+          <span class="portal-set-label">站点主色</span>
+          <div class="portal-color-row">
+            <button
+              v-for="c in PRESET_COLORS"
+              :key="c.hex"
+              :class="['color-swatch', { 'is-active': portalColor === c.hex }]"
+              :style="{ background: c.hex || 'linear-gradient(135deg,#5e7ce0,#236de9)' }"
+              :title="c.label"
+              @click="setPreset(c.hex)"
+            ></button>
+            <input type="color" class="color-picker" :value="portalColor || '#5e7ce0'" @input="onCustomColor" title="自定义主色" />
+          </div>
+          <Button size="sm" variant="primary" :disabled="!portalColorDirty || savingColor" @click="saveColor">
+            {{ savingColor ? '保存中…' : '保存主色' }}
+          </Button>
+        </div>
+        <div class="portal-set-row">
+          <span class="portal-set-label">SEO 文案</span>
+          <span class="portal-set-note">
+            在「参数配置」中编辑 <code class="mono">sys.seo.title</code>、<code class="mono">sys.seo.description</code>、<code class="mono">sys.seo.keywords</code> 三项参数，门户前台与搜索引擎 / AI 引擎（GEO）收录将实时使用。
+          </span>
+        </div>
+      </div>
     </section>
 
     <footer class="theme-footnote">

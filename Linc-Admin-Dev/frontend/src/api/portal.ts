@@ -72,8 +72,8 @@ export function createPortalApi(client: HttpClient) {
     },
     /** 门户皮肤：持久化到服务端，前台实时跟随后台主题 */
     skin: {
-      get: () => client.get<{ skin: string }>('/theme/skin'),
-      apply: (skin: string) => client.put<{ skin: string }>('/theme/skin', { skin }),
+      get: () => client.get<{ skin: string; primary?: string | null }>('/theme/skin'),
+      apply: (skin: string, primary?: string) => client.put<{ skin: string; primary?: string }>('/theme/skin', { skin, primary: primary || undefined }),
     },
     generator: {
       tables: {

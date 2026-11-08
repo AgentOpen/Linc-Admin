@@ -9,20 +9,24 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Linc\Service\SkinService;
 
 /**
- * 门户皮肤接口：主题中心把选择持久化到服务端，前台即时跟随。
+ * 门户站点设置接口：皮肤、站点主色、SEO 文案（写入 sys_config，前台与 SEO 输出实时跟随）。
  */
 final class SkinController
 {
     public static function get(Request $request, Response $response): Response
     {
-        return AuthController::ok($response, ['skin' => SkinService::current()]);
+        return AuthController::ok($response, [
+            'skin' => SkinService::current(),
+            'primary' => SkinService::primary(),
+            'seo' => SkinService::seo(),
+        ]);
     }
 
-    public static function apply(Request $request, Response $response): Response
+    /** @param array<string,mixed> $args 路由占位（无） */
+    public static function applyFromRoute(Request $request, Response $response, array $args): Response
     {
         $body = json_body((string) $request->getBody());
-        $skin = isset($body['skin']) && is_string($body['skin']) ? $body['skin'] : '';
-        SkinService::apply($skin);
-        return AuthController::ok($response, ['skin' => SkinService::current()]);
+        $result = SkinService::applyAll($body);
+        return AuthController::ok($response, $result);
     }
 }

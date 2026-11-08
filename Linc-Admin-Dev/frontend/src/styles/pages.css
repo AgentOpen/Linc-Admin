@@ -695,3 +695,22 @@
   border-radius: 4px;
   padding: 1px 6px;
 }
+
+/* ── 门户站点设置 ── */
+.portal-set { border-radius: var(--r-lg); padding: 22px 26px 24px; display: flex; flex-direction: column; gap: 16px; }
+.portal-set-head { display: flex; align-items: baseline; gap: 12px; }
+.portal-set-head b { font-size: 15px; font-weight: 660; }
+.portal-set-head .faint { font-size: 12.5px; }
+.portal-set-body { display: flex; flex-direction: column; gap: 14px; }
+.portal-set-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.portal-set-label { font-size: 13px; font-weight: 600; color: var(--ink); min-width: 72px; flex: none; }
+.portal-color-row { display: flex; gap: 8px; align-items: center; }
+.color-swatch {
+  width: 26px; height: 26px; border-radius: 7px; cursor: pointer; border: 2px solid transparent;
+  transition: transform .18s var(--ease), border-color .18s;
+}
+.color-swatch:hover { transform: scale(1.12); }
+.color-swatch.is-active { border-color: var(--ink); box-shadow: 0 0 0 2px var(--canvas), 0 0 0 4px var(--ink-soft); }
+.color-picker { width: 26px; height: 26px; border: 1px dashed var(--line-strong); border-radius: 7px; cursor: pointer; padding: 0; background: none; }
+.portal-set-note { font-size: 12.5px; line-height: 1.7; color: var(--ink-soft); max-width: 640px; }
+.portal-set-note code { font-family: var(--mono); font-size: 11.5px; color: var(--ink); background: var(--groove-bg); border-radius: 4px; padding: 1px 5px; }

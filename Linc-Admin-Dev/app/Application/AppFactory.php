@@ -92,7 +92,7 @@ final class AppFactory
         })->add(new RequirePermission('biz:announce:list'));
 
         $app->get('/api/theme/skin', [SkinController::class, 'get']);
-        $app->put('/api/theme/skin', [SkinController::class, 'apply'])
+        $app->put('/api/theme/skin', [SkinController::class, 'applyFromRoute'])
             ->add(new OperLog('主题中心', '应用门户主题'))
             ->add(new RequirePermission('system:theme:edit'));
 
