@@ -25,6 +25,49 @@ $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 $uri = rawurldecode($uri);
 
+$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+
+if ($uri === '/robots.txt') {
+    header('Content-Type: text/plain; charset=utf-8');
+    echo "User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /install.html\n\n";
+    echo "# AI 引擎收录（GEO）\n";
+    foreach (['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-Web', 'anthropic-ai', 'PerplexityBot', 'Google-Extended', 'Bingbot'] as $bot) {
+        echo "User-agent: {$bot}\nAllow: /\nDisallow: /api/\n\n";
+    }
+    echo 'Sitemap: ' . $scheme . '://' . ($_SERVER['HTTP_HOST'] ?? '') . "/sitemap.xml\n";
+    exit;
+}
+
+if ($uri === '/sitemap.xml') {
+    header('Content-Type: application/xml; charset=utf-8');
+    $host = $scheme . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
+    $today = date('Y-m-d');
+    echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+    echo "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n";
+    echo "  <url><loc>{$host}/</loc><lastmod>{$today}</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>\n";
+    echo "</urlset>\n";
+    exit;
+}
+
+if ($uri === '/llms.txt') {
+    header('Content-Type: text/markdown; charset=utf-8');
+    $host = $scheme . '://' . ($_SERVER['HTTP_HOST'] ?? '');
+    echo "# 灵枢中控 Linc-Admin\n\n";
+    echo "> 统一管理后台 · 兼具设计美学与高效开发的 PHP 中后台模板。\n\n";
+    echo "## 系统概览\n\n";
+    echo "- 后端：PHP 8.0+ / Slim 4 / PDO MySQL\n";
+    echo "- 前端：Vue 3 / TypeScript / Vite，多主题\n\n";
+    echo "## 页面\n\n";
+    echo "- [门户首页]({$host}/)\n";
+    echo "- [管理后台]({$host}/admin)\n\n";
+    exit;
+}
+
+
+$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+
+require __DIR__ . '/seo-routes.php';
+
 /* ── API：交给 Slim ───────────────────────────────────────── */
 
 if ($uri === '/api' || str_starts_with($uri, '/api/')) {
@@ -43,6 +86,7 @@ if ($uri === '/api' || str_starts_with($uri, '/api/')) {
     }
     exit;
 }
+
 
 /* ── 页面与静态资源 ───────────────────────────────────────── */
 
@@ -142,6 +186,9 @@ function serveFile(string $file): void
         default => 'application/octet-stream',
     };
     header('Content-Type: ' . $mime);
+    if ($mime === 'text/html; charset=utf-8') {
+        header('Cache-Control: no-cache, no-store, must-revalidate');
+    }
     if ($mime === 'text/html; charset=utf-8') {
         header('Cache-Control: no-cache, no-store, must-revalidate');
     }
