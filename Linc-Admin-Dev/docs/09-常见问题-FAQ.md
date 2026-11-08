@@ -41,7 +41,7 @@ UPDATE sys_user SET password = '$2y$10$L7q28dpKkcfrrUzfvZebqe7pvxcKpaSgh7EUenf9Q
 `config/config.php` 里的数据库账号密码与 MySQL 实际不符。修复：编辑 config/config.php 改成正确账号密码；或删除 runtime/install.lock 与 config/config.php 后访问 /install.html 重装。建议用面板创建的专属数据库账号而非 root。
 
 **Q9.5：安装向导提示「环境检测失败：HTTP 404」或「后端接口不可达」？**
-伪静态未配置（新手最常见问题）：页面能打开但 `/api/*` 全部 404。宝塔用户：站点设置 → 伪静态 → 下拉选 `laravel5` 模板保存；Nginx 用户：在 `location /` 中加 `try_files $uri $uri/ /index.php$is_args$args;`；Apache：启用 mod_rewrite 且 AllowOverride All。配置后刷新页面即可。
+伪静态未配置（新手最常见问题）：页面能打开但 `/api/*` 全部 404。宝塔用户：站点设置 → 伪静态 → 下拉选 `laravel5` 模板保存；Nginx 用户：在 `location /` 中加 `try_files $uri $uri/ /index.php?$query_string;`；Apache：启用 mod_rewrite 且 AllowOverride All。配置后刷新页面即可。
 
 **Q10：首页空白或刷新 404？**
 运行目录未指向 `public/`，或伪静态未配置（见《06》）。SPA 是 history 路由，任何路径都应回退到 `public/index.php`。

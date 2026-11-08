@@ -443,7 +443,7 @@
     if (!error || !error.isApiUnreachable) return null;
     return '后端接口不可达（' + (error.message === 'NETWORK' ? '网络连接失败' : error.message) + '），通常是<b>伪静态 / URL 重写未配置</b>：'
       + '<br>· 宝塔用户：网站 → 设置 → <b>伪静态</b> → 下拉选择 <code>laravel5</code> 模板 → 保存，然后刷新本页；'
-      + '<br>· Nginx 用户：在站点配置的 location / 中添加 <code>try_files $uri $uri/ /index.php$is_args$args;</code>（完整示例见 docs/06-配置与部署.md）；'
+      + '<br>· Nginx 用户：在站点配置的 location / 中添加 <code>try_files $uri $uri/ /index.php?$query_string;</code>（完整示例见 docs/06-配置与部署.md）；'
       + '<br>· Apache 用户：确认已启用 mod_rewrite 且站点 AllowOverride 为 All（public/.htaccess 已内置）。';
   }
   function call(path, body) {
